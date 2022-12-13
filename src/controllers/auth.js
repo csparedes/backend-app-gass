@@ -15,11 +15,16 @@ export const postLogin = async (req = request, res = response) => {
 		});
 	}
 
-	const isPassOk = bcrypt.compareSync(clave, userFinded.clave);
-	if (!isPassOk) {
-		return res.status(400).json({
-			msg: 'Clave incorrecta',
-		});
+	const claveEnc = await ClientesModel.sequelize.query(
+		`
+			SELECT hex(AES_ENCRYPT('${clave}','${process.env.SECRET_KEY_MYSQL}')) as claveEnc;
+		`
+	);
+	
+	if(claveEnc[0][0]['claveEnc'] !== userFinded.dataValues.clave){
+			return res.status(400).json({
+				msg: 'Clave incorrecta',
+			});
 	}
 
 	return res.json({
@@ -48,6 +53,12 @@ export const postRegister = async (req = request, res = response) => {
 		});
 	}
 
+	const claveEnc = await ClientesModel.sequelize.query(
+		`
+			SELECT hex(AES_ENCRYPT('${clave}','${process.env.SECRET_KEY_MYSQL}')) as claveEnc;
+		`
+	);
+
 	const newUser = ClientesModel.build({
 		NoIdentificacion,
 		Nombres,
@@ -55,7 +66,7 @@ export const postRegister = async (req = request, res = response) => {
 		Direccion,
 		Telefono,
 		email,
-		clave: bcrypt.hashSync(clave, bcrypt.genSaltSync()),
+		clave: claveEnc[0][0]['claveEnc'],
 		Perfil,
 	});
 	await newUser.save();
@@ -69,8 +80,16 @@ export const postRegister = async (req = request, res = response) => {
 export const postChangePassword = async (req = request, res = response) => {
 	const { email, clave } = req.body;
 
+	const claveEnc = await ClientesModel.sequelize.query(
+		`
+			SELECT hex(AES_ENCRYPT('${clave}','${process.env.SECRET_KEY_MYSQL}')) as claveEnc;
+		`
+	);
+
+
+
 	const updateUser = await ClientesModel.update(
-		{ clave: bcrypt.hashSync(clave, bcrypt.genSaltSync()) },
+		{ clave: claveEnc[0][0]['claveEnc']},
 		{ where: { email } }
 	);
 	if (!updateUser) {

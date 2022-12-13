@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  backend-app-gas:
+    container_name: backend-app-gas
+    restart: on-failure
+    build: .
+    ports:
+      - 9096:9096
