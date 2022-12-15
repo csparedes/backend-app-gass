@@ -1,5 +1,4 @@
 import { request, response } from 'express';
-import bcrypt from 'bcrypt';
 
 import { ClientesModel } from '../models/clientes.js';
 import { generateJWT } from '../helpers/generateJWT.js';
