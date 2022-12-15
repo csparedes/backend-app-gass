@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { db } from '../database/connectionMysql.js'
 
 export const ClientesModel = db.define(
-	'clientes',
+	'Clientes',
 	{
 		idCliente: {
 			type: DataTypes.BIGINT(20),

@@ -1,1 +1,5 @@
 node_modules/
+.env
+src/server/pucei_edu_ec.crt
+src/server/pucei_edu_ec.key
+src/server/root_OV.crt
